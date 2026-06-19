@@ -62,7 +62,7 @@ function landing_track()
 
 function landing_tick()
 {
-	for (let player = 0; player < maxPlayers; player++)
+	for (const player of base_players)
 	{
 		if (player === ENEMY)
 		{
@@ -157,7 +157,7 @@ function landing_getTransporter(player)
 
 function landing_isTicking()
 {
-	for (let player = 0; player < maxPlayers; player++)
+	for (const player of base_players)
 	{
 		if (player === ENEMY)
 		{
