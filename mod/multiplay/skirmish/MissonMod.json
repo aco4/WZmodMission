@@ -1,0 +1,7 @@
+{
+    "AI": {
+        "js": "MissionMod.js",
+        "name": "Mission Mod",
+        "tip": "Clear the enemy sector!"
+    }
+}
