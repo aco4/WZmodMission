@@ -7,6 +7,10 @@ function gameOver_eventPlayerLeft(player)
 {
 	for (let player = 0; player < maxPlayers; player++)
 	{
+		if (player === ENEMY)
+		{
+			continue;
+		}
 		if (countDroid(DROID_ANY, player) > 0)
 		{
 			return;
