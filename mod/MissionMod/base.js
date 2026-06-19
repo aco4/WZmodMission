@@ -60,7 +60,7 @@ function base_main()
 	hackNetOff();
 	for (let player = 0; player < maxPlayers; player++)
 	{
-		addSpotter(startPositions[ENEMY].x, startPositions[ENEMY].y, player, 91, false, 5000);
+		addSpotter(startPositions[ENEMY].x, startPositions[ENEMY].y, player, 91, false, 1000);
 	}
 	hackNetOn();
 

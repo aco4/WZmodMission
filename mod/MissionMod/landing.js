@@ -4,6 +4,11 @@ var landingData = new Array(maxPlayers);
 
 function landing_eventStartLevel()
 {
+	queue("landing_spawnTransport", CUTSCENE_DURATION);
+}
+
+function landing_spawnTransport()
+{
 	for (let player = 0; player < maxPlayers; player++)
 	{
 		if (player === ENEMY)
@@ -23,6 +28,7 @@ function landing_eventStartLevel()
 		hackNetOff();
 		const droid = addDroid(player, landingData[player].origin.x, landingData[player].origin.y, "Dropship", "SuperTransportBody", "V-Tol", "", "", "NULL-VTOL-Transport-Turret");
 		hackNetOn();
+		setDroidExperience(droid, 9999);
 
 		// Move it to the HQ
 		orderDroidLoc(droid, DORDER_MOVE, landingData[player].destination.x, landingData[player].destination.y);
@@ -30,6 +36,7 @@ function landing_eventStartLevel()
 		// Move the camera
 		if (player === selectedPlayer)
 		{
+			// cameraSlide(landingData[player].origin.x * 128, landingData[player].origin.y * 128);
 			centreView(landingData[player].origin.x, landingData[player].origin.y);
 		}
 
@@ -42,7 +49,7 @@ function landing_eventStartLevel()
 	}
 
 	// Start the landing process loop
-	queue("landing_tick", 2 * 1000);
+	queue("landing_tick", 1 * 1000);
 
 	// Track the transport with the camera (Need 1 tick delay)
 	queue("landing_track", 100);
@@ -65,10 +72,16 @@ function landing_tick()
 		{
 			const droid = enumDroid(player)[0];
 			orderDroidLoc(droid, DORDER_MOVE, landingData[player].destination.x, landingData[player].destination.y);
+
 			if (landing_isAt(landingData[player].destination.x, landingData[player].destination.y, droid.id))
 			{
 				landingData[player].landingTime = gameTime + (4 * 1000);
 				landingData[player].state = "LANDING";
+			}
+
+			if (player === selectedPlayer)
+			{
+				cameraTrack(droid);
 			}
 		}
 		else if (landingData[player].state === "LANDING")

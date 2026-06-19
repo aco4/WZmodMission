@@ -1,6 +1,11 @@
 namespace("timer_");
 
-function timer_eventGameInit()
+function timer_eventStartLevel()
+{
+	queue("timer_set", CUTSCENE_DURATION);
+}
+
+function timer_set()
 {
 	switch (playerData[ENEMY].difficulty)
 	{

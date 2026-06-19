@@ -1,0 +1,1 @@
+var CUTSCENE_DURATION = 11 * 1000;

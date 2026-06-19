@@ -1,5 +1,6 @@
 # Mission Mod
-- Co-op campaign
+- Destroy the nukes before the timer reaches 0
+- Multiplayer co-op campaign mission
 
 ## License
 SPDX-License-Identifier: GPL-2.0-or-later

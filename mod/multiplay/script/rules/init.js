@@ -7,6 +7,7 @@ include("MissionMod/MRT.js");
 include("MissionMod/DEFENSES.js");
 include("MissionMod/WALLS.js");
 include("MissionMod/TIME.js");
+include("MissionMod/CUTSCENE_DURATION.js");
 
 // Include rest
 include("MissionMod/reticule.js");
@@ -26,3 +27,4 @@ include("MissionMod/landing.js");
 include("MissionMod/reveal.js");
 include("MissionMod/spawn.js");
 include("MissionMod/timer.js");
+include("MissionMod/cutscene.js");
