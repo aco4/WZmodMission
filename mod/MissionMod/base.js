@@ -1,6 +1,7 @@
 namespace("base_");
 
 var base_heatmap; // Store distance from player base
+var base_players = [];
 
 function base_eventGameInit()
 {
@@ -11,6 +12,10 @@ function base_eventGameInit()
 		// 	continue;
 		// }
 
+		if (countDroid(DROID_ANY, player) > 0)
+		{
+			base_players.push(player);
+		}
 		enumStruct(player).forEach(s => removeObject(s));
 		enumDroid(player).forEach(d => removeObject(d));
 	}

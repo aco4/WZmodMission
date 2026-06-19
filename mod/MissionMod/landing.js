@@ -9,7 +9,7 @@ function landing_eventStartLevel()
 
 function landing_spawnTransport()
 {
-	for (let player = 0; player < maxPlayers; player++)
+	for (const player of base_players) // base_players is defined in base.js
 	{
 		if (player === ENEMY)
 		{
