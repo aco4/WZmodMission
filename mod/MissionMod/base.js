@@ -1,7 +1,6 @@
 namespace("base_");
 
 var base_heatmap; // Store distance from player base
-var base_path; // Store tiles that must remain empty
 
 function base_eventGameInit()
 {
@@ -23,40 +22,13 @@ function base_main()
 {
 	base_heatmap = buildDistanceHeatmap();
 
-	const pathsToEnemy = [];
-
-	for (let player = 0; player < maxPlayers; player++)
-	{
-		if (player === ENEMY)
-		{
-			continue;
-		}
-
-		pathsToEnemy[player] = findPathToEnemy(startPositions[player]);
-	}
-
-	// Build path to enemy
-	base_path = new Set();
-	for (let player = 0; player < maxPlayers; player++)
-	{
-		if (player === ENEMY)
-		{
-			continue;
-		}
-		pathsToEnemy[player].forEach(e => base_path.add(e));
-		// for (const coord of pathsToEnemy[player])
-		// {
-		// 	const [x, y] = coord.split(",").map(z => Number(z));
-		// 	addStructure("A0HardcreteMk1CWall", 0, x*128, y*128);
-		// }
-	}
-
-	// Put back the enemy HQ
-	// addStructure("A0CommandCentre", ENEMY, startPositions[ENEMY].x * 128, startPositions[ENEMY].y * 128);
+	// Put Missile Silos where HQ was
 	addStructure("NX-ANTI-SATSite", ENEMY, startPositions[ENEMY].x * 128, startPositions[ENEMY].y * 128);
 	addStructure("NX-ANTI-SATSite", ENEMY, startPositions[ENEMY].x * 128 - 128, startPositions[ENEMY].y * 128);
 	addStructure("NX-ANTI-SATSite", ENEMY, startPositions[ENEMY].x * 128, startPositions[ENEMY].y * 128 - 128);
 	addStructure("NX-ANTI-SATSite", ENEMY, startPositions[ENEMY].x * 128 - 128, startPositions[ENEMY].y * 128 - 128);
+
+	// Give players vision of Missile Silos
 	hackNetOff();
 	for (let player = 0; player < maxPlayers; player++)
 	{
@@ -108,7 +80,7 @@ function base_main()
 			const x = i % mapWidth;
 			const y = Math.floor(i / mapWidth);
 
-			if (base_canBuildAt(x, y, base_path))
+			if (base_canBuildAt(x, y))
 			{
 				base_buildAt(x, y, DEFENSES);
 			}
@@ -149,22 +121,12 @@ function base_buildAt(x, y, structures)
 	}
 }
 
-function idx(x, y)
-{
-	return y * mapWidth + x;
-}
-
 /**
  * @param {number} x
  * @param {number} y
  */
 function base_canBuildAt(x, y)
 {
-	if (base_path && base_path.has(`${x},${y}`))
-	{
-		return false;
-	}
-
 	const t = terrainType(x, y);
 	if (t === TER_CLIFFFACE || t === TER_WATER)
 	{
@@ -199,14 +161,16 @@ function buildDistanceHeatmap()
 		}
 
 		const { x, y } = startPositions[player];
-		dist[idx(x, y)] = 0;
+		const i = y*mapWidth + x;
+		dist[i] = 0;
 		queue.push({ x, y });
 	}
 
 	while (head < queue.length)
 	{
 		const cur = queue[head++];
-		const curDist = dist[idx(cur.x, cur.y)];
+		const i = cur.y*mapWidth + cur.x;
+		const curDist = dist[i];
 
 		const neighbors = [
 			[cur.x + 1, cur.y],
@@ -222,98 +186,18 @@ function buildDistanceHeatmap()
 				continue;
 			}
 
-			if (dist[idx(nx, ny)] <= curDist + 1)
+			const i = ny*mapWidth + nx;
+			if (dist[i] <= curDist + 1)
 			{
 				continue;
 			}
 
-			dist[idx(nx, ny)] = curDist + 1;
+			dist[i] = curDist + 1;
 			queue.push({x: nx, y: ny});
 		}
 	}
 
 	return dist;
-}
-function findPathToEnemy(startPos)
-{
-	const enemyPos = startPositions[ENEMY];
-
-	const enemyContinent =
-		MapTiles[enemyPos.y][enemyPos.x].limitedContinent;
-
-	const startContinent =
-		MapTiles[startPos.y][startPos.x].limitedContinent;
-
-	if (enemyContinent !== startContinent)
-	{
-		return new Set();
-	}
-
-	const visited = new Array(mapWidth * mapHeight).fill(false);
-	const parent = new Array(mapWidth * mapHeight).fill(null);
-
-	const queue = [startPos];
-	let head = 0;
-
-	visited[idx(startPos.x, startPos.y)] = true;
-
-	while (head < queue.length)
-	{
-		const cur = queue[head++];
-
-		if (cur.x === enemyPos.x && cur.y === enemyPos.y)
-		{
-			break;
-		}
-
-		const neighbors = [
-			[cur.x, cur.y - 1],
-			[cur.x, cur.y + 1],
-			[cur.x - 1, cur.y],
-			[cur.x + 1, cur.y],
-		];
-
-		for (const [nx, ny] of neighbors)
-		{
-			if (!base_canBuildAt(nx, ny))
-			{
-				continue;
-			}
-
-			const n = idx(nx, ny);
-			if (visited[n])
-			{
-				continue;
-			}
-
-			visited[n] = true;
-			parent[n] = cur;
-			queue.push({x: nx, y: ny});
-		}
-	}
-
-	if (!visited[idx(enemyPos.x, enemyPos.y)])
-	{
-		return new Set();
-	}
-
-	const path = new Set();
-
-	let cur = enemyPos;
-
-	while (cur)
-	{
-		path.add(cur.x + "," + cur.y);
-
-		if (cur.x === startPos.x && cur.y === startPos.y)
-		{
-			break;
-		}
-
-		cur = parent[idx(cur.x, cur.y)];
-	}
-
-	return path;
 }
 
 /**
