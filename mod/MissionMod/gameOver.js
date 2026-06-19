@@ -2,28 +2,21 @@ namespace("gameOver_");
 
 var gameOver_message = "";
 var gameOver = false;
+var gameOver_leaves = 0;
 
 function gameOver_eventPlayerLeft(player)
 {
-	for (let player = 0; player < maxPlayers; player++)
+	gameOver_leaves += 1;
+	if (gameOver_leaves >= base_players.length - 1)
 	{
-		if (player === ENEMY)
+		for (let player = 0; player < maxPlayers; player++)
 		{
-			continue;
+			gameOver_finalize(player, false);
 		}
-		if (countDroid(DROID_ANY, player) > 0)
+		if (isSpectator(-1))
 		{
-			return;
+			gameOverMessage(false);
 		}
-	}
-
-	for (let player = 0; player < maxPlayers; player++)
-	{
-		gameOver_finalize(player, false);
-	}
-	if (isSpectator(-1))
-	{
-		gameOverMessage(false);
 	}
 }
 
