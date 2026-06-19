@@ -3,6 +3,26 @@ namespace("gameOver_");
 var gameOver_message = "";
 var gameOver = false;
 
+function gameOver_eventPlayerLeft(player)
+{
+	for (let player = 0; player < maxPlayers; player++)
+	{
+		if (countDroid(DROID_ANY, player) > 0)
+		{
+			return;
+		}
+	}
+
+	for (let player = 0; player < maxPlayers; player++)
+	{
+		gameOver_finalize(player, false);
+	}
+	if (isSpectator(-1))
+	{
+		gameOverMessage(false);
+	}
+}
+
 function gameOver_eventDestroyed(object)
 {
 	if (object.player === ENEMY && object.type === STRUCTURE)
@@ -27,7 +47,8 @@ function gameOver_eventDestroyed(object)
 		{
 			gameOver_finalize(player, true);
 		}
-		if (isSpectator(-1)) {
+		if (isSpectator(-1))
+		{
 			gameOverMessage(false);
 		}
 
@@ -68,17 +89,20 @@ function gameOver_timeout()
 	{
 		gameOver_finalize(player, false);
 	}
-	if (isSpectator(-1)) {
+	if (isSpectator(-1))
+	{
 		gameOverMessage(false);
 	}
 }
 
 function gameOver_finalize(player, win)
 {
-	if (player === selectedPlayer) {
+	if (player === selectedPlayer)
+	{
 		gameOverMessage(win);
 	}
-	if (!win && !isSpectator(player) && playerData[player].isHuman) {
+	if (!win && !isSpectator(player) && playerData[player].isHuman)
+	{
 		// should come after gameOverMessage() to ensure the proper gameOverMessage is displayed
 		transformPlayerToSpectator(player);
 	}
