@@ -9,19 +9,18 @@ function gameOver_eventPlayerLeft(player)
 	gameOver_leaves += 1;
 	if (gameOver_leaves >= base_players.length - 1)
 	{
-		for (let player = 0; player < maxPlayers; player++)
-		{
-			gameOver_finalize(player, false);
-		}
-		if (isSpectator(-1))
-		{
-			gameOverMessage(false);
-		}
+		gameOver = true;
+		gameOver_endGame(false);
 	}
 }
 
 function gameOver_eventDestroyed(object)
 {
+	if (gameOver)
+	{
+		return;
+	}
+
 	if (object.player === ENEMY && object.type === STRUCTURE)
 	{
 		// Check if nuclear sites are destroyed
@@ -31,23 +30,8 @@ function gameOver_eventDestroyed(object)
 			return;
 		}
 
-		if (gameOver)
-		{
-			return;
-		}
-
 		gameOver = true;
-
-		playSound("pcv459.ogg");
-
-		for (let player = 0; player < maxPlayers; player++)
-		{
-			gameOver_finalize(player, true);
-		}
-		if (isSpectator(-1))
-		{
-			gameOverMessage(false);
-		}
+		gameOver_endGame(true);
 
 		gameOver_message = gameOver_formatTime(gameTime);
 		gameOver_sendMessage();
@@ -61,11 +45,11 @@ function gameOver_eventMissionTimeout()
 	{
 		return;
 	}
+
 	playSound("pcv629.ogg");
 	playSound("pcv458.ogg");
 	playSound(`laugh${syncRandom(3)+1}.ogg`);
 
-	gameOver = true;
 	for (let player = 0; player < maxPlayers; player++)
 	{
 		if (player === ENEMY)
@@ -77,14 +61,21 @@ function gameOver_eventMissionTimeout()
 			fireWeaponAtLoc("LasSat", s.x, s.y, ENEMY);
 		}
 	}
+
+	gameOver = true;
 	queue("gameOver_timeout", 5 * 1000);
 }
 
 function gameOver_timeout()
 {
+	gameOver_endGame(false);
+}
+
+function gameOver_endGame(win)
+{
 	for (let player = 0; player < maxPlayers; player++)
 	{
-		gameOver_finalize(player, false);
+		gameOver_finalize(player, win);
 	}
 	if (isSpectator(-1))
 	{
