@@ -27,8 +27,9 @@ function spawn_eventDestroyed(object)
 				if (template)
 				{
 					hackNetOff();
-					addDroid(ENEMY, x, y, template.name, template.body, template.propulsion, "", "", ...template.turrets);
+					const droid = addDroid(ENEMY, x, y, template.name, template.body, template.propulsion, "", "", ...template.turrets);
 					hackNetOn();
+					orderDroidLoc(droid, DORDER_PATROL, x, y);
 					return;
 				}
 			}
