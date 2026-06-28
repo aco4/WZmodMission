@@ -153,7 +153,7 @@ function base_canBuildAt(x, y)
 
 function buildDistanceHeatmap()
 {
-	const dist = new Array(mapWidth * mapHeight).fill(Infinity);
+	const dist = new Array(mapWidth * mapHeight).fill(null);
 	const queue = [];
 	let head = 0;
 
@@ -219,7 +219,7 @@ function buildDistanceHeatmap()
  */
 function base_get(distance, structures)
 {
-	if (distance === Infinity || structures.length === 0)
+	if (distance === null || structures.length === 0)
 	{
 		return null;
 	}
