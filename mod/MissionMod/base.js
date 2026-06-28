@@ -184,6 +184,12 @@ function buildDistanceHeatmap()
 			[cur.x, cur.y - 1],
 		];
 
+		// 25% chance to spread diagonally. Effect: circular BFS
+		if (!syncRandom(4) && (base_canBuildAt(cur.x+1, cur.y) || base_canBuildAt(cur.x, cur.y+1))) neighbors.push([cur.x + 1, cur.y + 1]);
+		if (!syncRandom(4) && (base_canBuildAt(cur.x+1, cur.y) || base_canBuildAt(cur.x, cur.y-1))) neighbors.push([cur.x + 1, cur.y - 1]);
+		if (!syncRandom(4) && (base_canBuildAt(cur.x-1, cur.y) || base_canBuildAt(cur.x, cur.y+1))) neighbors.push([cur.x - 1, cur.y + 1]);
+		if (!syncRandom(4) && (base_canBuildAt(cur.x-1, cur.y) || base_canBuildAt(cur.x, cur.y-1))) neighbors.push([cur.x - 1, cur.y - 1]);
+
 		for (const [nx, ny] of neighbors)
 		{
 			if (!base_canBuildAt(nx, ny))
