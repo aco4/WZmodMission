@@ -1,17 +1,13 @@
 namespace("base_");
 
-var base_heatmap; // Store distance from player base
+var base_heatmap; // Store distance from player base. null means unreachable
+var base_maxDist; // May be null if enemy HQ is not reachable
 var base_players = [];
 
 function base_eventGameInit()
 {
 	for (let player = 0; player < maxPlayers; player++)
 	{
-		// if (player === ENEMY)
-		// {
-		// 	continue;
-		// }
-
 		if (countDroid(DROID_ANY, player) > 0)
 		{
 			base_players.push(player);
@@ -25,7 +21,8 @@ function base_eventGameInit()
 
 function base_main()
 {
-	base_heatmap = buildDistanceHeatmap();
+	base_heatmap = base_buildDistanceHeatmap();
+	base_maxDist = base_getMaxDist();
 
 	// Put Missile Silos where HQ was
 	addStructure("NX-ANTI-SATSite", ENEMY, startPositions[ENEMY].x * 128, startPositions[ENEMY].y * 128);
@@ -151,7 +148,7 @@ function base_canBuildAt(x, y)
 	return true;
 }
 
-function buildDistanceHeatmap()
+function base_buildDistanceHeatmap()
 {
 	const dist = new Array(mapWidth * mapHeight).fill(null);
 	const queue = [];
@@ -219,14 +216,24 @@ function buildDistanceHeatmap()
  */
 function base_get(distance, structures)
 {
-	if (distance === null || structures.length === 0)
+	if (distance === null || structures.length === 0 || distance < 20)
 	{
 		return null;
 	}
-	if (distance >= structures.length)
-	{
-		distance = structures.length - 1;
-	}
-	const i = Math.max(0, distance - syncRandom(5));
+
+	// Compare distance to max
+	const a = distance / base_maxDist;
+	const i = Math.max(0, Math.min(structures.length - 1, Math.floor(a * structures.length)) - syncRandom(5));
 	return structures[i];
+}
+
+function base_getMaxDist()
+{
+	if (!base_heatmap)
+	{
+		return null;
+	}
+	const { x, y } = startPositions[ENEMY];
+	const i = y*mapWidth + x;
+	return base_heatmap[i];
 }
