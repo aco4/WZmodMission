@@ -6,6 +6,7 @@ include("MissionMod/TEMPLATES.js");
 include("MissionMod/MRT.js");
 include("MissionMod/DEFENSES.js");
 include("MissionMod/WALLS.js");
+include("MissionMod/BUILDINGS.js");
 include("MissionMod/TIME.js");
 include("MissionMod/CUTSCENE_DURATION.js");
 

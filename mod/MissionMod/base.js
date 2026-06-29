@@ -1,5 +1,6 @@
 namespace("base_");
 
+const BASE_EMPTY_DISTANCE = 20;
 var base_heatmap; // Store distance from player base. null means unreachable
 var base_maxDist; // May be null if enemy HQ is not reachable
 var base_players = [];
@@ -38,7 +39,29 @@ function base_main()
 	}
 	hackNetOn();
 
-	// Pick seeds
+	// Pick seeds for buildings
+	const building_seeds = new Set();
+	for (let x = 0; x < mapWidth; x++)
+	{
+		for (let y = 0; y < mapHeight; y++)
+		{
+			if (syncRandom(40) === 0)
+			{
+				building_seeds.add(`${x},${y}`);
+			}
+		}
+	}
+	// Build buildings
+	for (const seed of building_seeds)
+	{
+		const [x, y] = seed.split(",").map(z => Number(z));
+		if (base_canBuildAt(x, y))
+		{
+			base_buildAt(x, y, BUILDINGS);
+		}
+	}
+
+	// Pick seeds for walls
 	const seeds = new Set();
 	for (let x = 0; x < mapWidth; x++)
 	{
@@ -117,7 +140,7 @@ function base_buildAt(x, y, structures)
 	const i = y*mapWidth + x;
 	const distance = base_heatmap[i];
 	const structure = base_get(distance, structures);
-	if (structure)
+	if (structure && structureCanFit(structure, x, y))
 	{
 		addStructure(structure, ENEMY, x*128, y*128);
 	}
@@ -216,7 +239,7 @@ function base_buildDistanceHeatmap()
  */
 function base_get(distance, structures)
 {
-	if (distance === null || structures.length === 0 || distance < 20)
+	if (distance === null || structures.length === 0 || distance < BASE_EMPTY_DISTANCE)
 	{
 		return null;
 	}
