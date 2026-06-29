@@ -9,7 +9,7 @@ var spawn_deltas = [
 
 function spawn_eventDestroyed(object)
 {
-	if (object.type != STRUCTURE || object.player != ENEMY)
+	if (object.type !== STRUCTURE || object.player !== ENEMY)
 	{
 		return;
 	}
@@ -23,7 +23,10 @@ function spawn_eventDestroyed(object)
 			const t = terrainType(x, y);
 			if (!getObject(x, y) && t !== TER_CLIFFFACE && t !== TER_WATER)
 			{
-				const template = TEMPLATES[syncRandom(Math.min(TEMPLATES.length, Math.floor(TIME / 60)))];
+				const distance = base_heatmap[y*mapWidth + x]; // from base.js
+				const a = distance / base_maxDist; // from base.js
+				const i = Math.max(0, Math.min(TEMPLATES.length - 1, Math.floor(a * TEMPLATES.length)) - syncRandom(5));
+				const template = TEMPLATES[i];
 				if (template)
 				{
 					hackNetOff();
