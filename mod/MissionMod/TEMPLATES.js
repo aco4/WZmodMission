@@ -96,6 +96,4 @@ const TEMPLATES = [
 	{ turrets: ["RailGun3Mk1"], body: "Body13SUP", propulsion: "tracked01", name: "Gauss Cannon Wyvern Tracks" },
 	{ turrets: ["RailGun3Mk1"], body: "Body13SUP", propulsion: "tracked01", name: "Gauss Cannon Wyvern Tracks" },
 	{ turrets: ["RailGun3Mk1", "RailGun3Mk1"], body: "Body14SUP", propulsion: "tracked01", name: "Gauss Cannon Gauss Cannon Dragon Tracks" },
-	{ turrets: ["RailGun3Mk1", "RailGun3Mk1"], body: "Body14SUP", propulsion: "tracked01", name: "Gauss Cannon Gauss Cannon Dragon Tracks" },
-	{ turrets: ["RailGun3Mk1", "RailGun3Mk1"], body: "Body14SUP", propulsion: "tracked01", name: "Gauss Cannon Gauss Cannon Dragon Tracks" },
 ];
