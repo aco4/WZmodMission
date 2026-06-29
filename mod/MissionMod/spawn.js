@@ -24,16 +24,19 @@ function spawn_eventDestroyed(object)
 			if (!getObject(x, y) && t !== TER_CLIFFFACE && t !== TER_WATER)
 			{
 				const distance = base_heatmap[y*mapWidth + x]; // from base.js
-				const a = distance / base_maxDist; // from base.js
-				const i = Math.max(0, Math.min(TEMPLATES.length - 1, Math.floor(a * TEMPLATES.length)) - syncRandom(5));
-				const template = TEMPLATES[i];
-				if (template)
+				if (distance !== null)
 				{
-					hackNetOff();
-					const droid = addDroid(ENEMY, x, y, template.name, template.body, template.propulsion, "", "", ...template.turrets);
-					hackNetOn();
-					orderDroidLoc(droid, DORDER_PATROL, x, y);
-					return;
+					const a = distance / base_maxDist; // from base.js
+					const i = Math.max(0, Math.min(TEMPLATES.length - 1, Math.floor(a * TEMPLATES.length)) - syncRandom(5));
+					const template = TEMPLATES[i];
+					if (template)
+					{
+						hackNetOff();
+						const droid = addDroid(ENEMY, x, y, template.name, template.body, template.propulsion, "", "", ...template.turrets);
+						hackNetOn();
+						orderDroidLoc(droid, DORDER_PATROL, x, y);
+						return;
+					}
 				}
 			}
 		}
