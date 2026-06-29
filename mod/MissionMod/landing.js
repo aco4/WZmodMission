@@ -57,7 +57,10 @@ function landing_spawnTransport()
 
 function landing_track()
 {
-	cameraTrack(enumDroid(selectedPlayer)[0]);
+	if (!isSpectator(-1))
+	{
+		cameraTrack(enumDroid(selectedPlayer)[0]);
+	}
 }
 
 function landing_tick()
