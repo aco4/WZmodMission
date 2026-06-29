@@ -198,7 +198,7 @@ function buildDistanceHeatmap()
 			}
 
 			const i = ny*mapWidth + nx;
-			if (dist[i] <= curDist + 1)
+			if (dist[i] !== null && dist[i] <= curDist + 1)
 			{
 				continue;
 			}
