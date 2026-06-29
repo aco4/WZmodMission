@@ -23,7 +23,12 @@ function base_eventGameInit()
 function base_main()
 {
 	base_heatmap = base_buildDistanceHeatmap();
-	base_maxDist = base_getMaxDist();
+	base_maxDist = (() =>
+	{
+		const { x, y } = startPositions[ENEMY];
+		const i = y*mapWidth + x;
+		return base_heatmap[i];
+	})();
 
 	// Put Missile Silos where HQ was
 	addStructure("NX-ANTI-SATSite", ENEMY, startPositions[ENEMY].x * 128, startPositions[ENEMY].y * 128);
@@ -140,8 +145,13 @@ function base_buildAt(x, y, structures)
 	const i = y*mapWidth + x;
 	const distance = base_heatmap[i];
 	const structure = base_get(distance, structures);
-	if (structure && structureCanFit(structure, x, y))
+	if (structure)
 	{
+		const size = base_sizeOf[structure];
+		if (size && !base_areaCheck[size](x, y))
+		{
+			return;
+		}
 		addStructure(structure, ENEMY, x*128, y*128);
 	}
 }
@@ -250,13 +260,47 @@ function base_get(distance, structures)
 	return structures[i];
 }
 
-function base_getMaxDist()
-{
-	if (!base_heatmap)
-	{
-		return null;
-	}
-	const { x, y } = startPositions[ENEMY];
-	const i = y*mapWidth + x;
-	return base_heatmap[i];
-}
+// x width, y width
+const base_sizeOf = {
+	"A0BaBaPowerGenerator": "1x1",
+	"A0CyborgFactory": "1x2",
+	"A0BaBaFactory": "2x1",
+	"A0ResearchFacility": "2x2",
+	"A0PowerGenerator": "2x2",
+	"X-Super-Cannon": "2x2",
+	"X-Super-Rocket": "2x2",
+	"X-Super-Missile": "2x2",
+	"X-Super-MassDriver": "2x2",
+	"A0LightFactory": "3x3",
+};
+
+const base_areaCheck = {
+	"1x1": (x, y) => {
+		return base_canBuildAt(x, y);
+	},
+	"1x2": (x, y) => {
+		return base_canBuildAt(x, y)
+			&& base_canBuildAt(x, y-1);
+	},
+	"2x1": (x, y) => {
+		return base_canBuildAt(x, y)
+			&& base_canBuildAt(x-1, y);
+	},
+	"2x2": (x, y) => {
+		return base_canBuildAt(x, y)
+			&& base_canBuildAt(x-1, y)
+			&& base_canBuildAt(x, y-1)
+			&& base_canBuildAt(x-1, y-1);
+	},
+	"3x3": (x, y) => {
+		return base_canBuildAt(x-1, y-1)
+			&& base_canBuildAt(x-1, y+0)
+			&& base_canBuildAt(x-1, y+1)
+			&& base_canBuildAt(x+0, y-1)
+			&& base_canBuildAt(x+0, y+0)
+			&& base_canBuildAt(x+0, y+1)
+			&& base_canBuildAt(x+1, y-1)
+			&& base_canBuildAt(x+1, y+0)
+			&& base_canBuildAt(x+1, y+1);
+	},
+};
