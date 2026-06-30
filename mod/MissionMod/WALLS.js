@@ -1,8 +1,6 @@
 var WALLS = [
-	"A0BaBaHorizontalWall",
-	"A0BaBaGunTowerEND",
-	"A0BaBaHorizontalWall",
-	"A0BaBaGunTower",
+	null,
+	null,
 	"A0BaBaHorizontalWall",
 	"A0BaBaGunTowerEND",
 	"A0BaBaHorizontalWall",

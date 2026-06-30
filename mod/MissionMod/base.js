@@ -1,6 +1,5 @@
 namespace("base_");
 
-const BASE_EMPTY_DISTANCE = 20;
 var base_heatmap; // Store distance from player base. null means unreachable
 var base_maxDist; // May be null if enemy HQ is not reachable
 var base_players = [];
@@ -242,22 +241,38 @@ function base_buildDistanceHeatmap()
 }
 
 /**
- * Get a random structure
- * @param {number} distance - tile distance from the player
- * @param {string[]} structures - options
- * @returns {string | null}
+ * Pick a random element from an array, based on distance from the nearest player HQ
+ * @param {number} distance - tile distance from the nearest player HQ
+ * @param {*[]} arr - array of elements to choose from
+ * @returns {*} A random element, or null
  */
-function base_get(distance, structures)
+function base_get(distance, arr)
 {
-	if (distance === null || structures.length === 0 || distance < BASE_EMPTY_DISTANCE)
+	if (!distance || arr.length === 0)
 	{
 		return null;
 	}
 
-	// Compare distance to max
-	const a = distance / base_maxDist;
-	const i = Math.max(0, Math.min(structures.length - 1, Math.floor(a * structures.length)) - syncRandom(5));
-	return structures[i];
+	const BASE_DISTANCE = 20;
+	const RANGE = base_maxDist - BASE_DISTANCE;
+
+	distance -= BASE_DISTANCE;
+	if (distance < 0)
+	{
+		return null;
+	}
+
+	// Normalize the distance [0, 1]
+	const normalizedDistance = distance / RANGE;
+
+	// Pick an index in the array
+	let i = Math.min(arr.length - 1, Math.floor(normalizedDistance * arr.length));
+
+	// Apply some randomness
+	const variance = Math.max(1, Math.floor(arr.length / 12));
+	i = Math.max(0, i - syncRandom(variance));
+
+	return arr[i];
 }
 
 // x width, y width
