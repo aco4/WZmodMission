@@ -1,5 +1,6 @@
 namespace("base_");
 
+const base_distance = 20; // Near-HQ player base exclusion zone distance
 var base_heatmap; // Store distance from player base. null means unreachable
 var base_maxDist; // May be null if enemy HQ is not reachable
 var base_players = [];
@@ -112,6 +113,22 @@ function base_main()
 			if (base_canBuildAt(x, y))
 			{
 				base_buildAt(x, y, DEFENSES);
+			}
+		}
+	}
+
+	// Build oils
+	for (const position of derrickPositions)
+	{
+		for (const [dx, dy] of [[-1,0],[1,0],[0,-1],[0,1]])
+		{
+			const x = position.x + dx;
+			const y = position.y + dy;
+			const distance = base_heatmap[y*mapWidth + x];
+			if (distance !== null && distance > base_distance)
+			{
+				addStructure("A0ResourceExtractor", ENEMY, position.x*128, position.y*128);
+				break;
 			}
 		}
 	}
@@ -253,10 +270,9 @@ function base_get(distance, arr)
 		return null;
 	}
 
-	const BASE_DISTANCE = 20;
-	const RANGE = base_maxDist - BASE_DISTANCE;
+	const RANGE = base_maxDist - base_distance;
 
-	distance -= BASE_DISTANCE;
+	distance -= base_distance;
 	if (distance < 0)
 	{
 		return null;
